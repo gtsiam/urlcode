@@ -1,5 +1,8 @@
 # Url coding utility
 
+[![crates.io](https://img.shields.io/crates/v/urlcode.svg)](https://crates.io/crates/urlcode)
+[![License](https://img.shields.io/github/license/gtsiam/urlcode)](https://github.com/gtsiam/urlcode/blob/master/LICENSE)
+
 This is a convinience tool for managing urls from the command line, inspired by the base\* family of
 tools from `coreutils`.
 
