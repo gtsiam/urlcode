@@ -1,0 +1,10 @@
+[package]
+name = "urlcode"
+version = "0.0.0"
+description = "Convinience tool for managing urls from the command line"
+authors = ["George Tsiamasiotis <crates.io@gtsiam.anonaddy.com>"]
+license = "MIT"
+repository = "https://github.com/gtsiam/urlcode"
+edition = "2018"
+
+[dependencies]
