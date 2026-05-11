@@ -2,8 +2,8 @@
 name = "urlcode"
 version = "0.1.0"
 description = "Convinience tool for managing urls from the command line"
-authors = ["George Tsiamasiotis <crates@gtsiam.anonaddy.com>"]
-license = "MIT"
+authors = ["George Tsiamasiotis <george@tsiamasiotis.gr>"]
+license = "MPL-2.0"
 repository = "https://github.com/gtsiam/urlcode"
 edition = "2018"
 readme = "README.md"
