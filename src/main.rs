@@ -1,28 +1,12 @@
+mod cli;
+
+use percent_encoding::AsciiSet;
 use std::{
     borrow::Cow,
     io::{self, Read, Write},
 };
-use structopt::{clap::arg_enum, StructOpt};
 
-arg_enum! {
-    #[derive(Debug)]
-    #[allow(non_camel_case_types)]
-    /// Character sets as per whatwg.
-    /// For control: https://url.spec.whatwg.org/#c0-control-percent-encode-set
-    enum CharPreset {
-        control,
-        non_alphanumeric,
-    }
-}
-
-#[derive(Debug, StructOpt)]
-struct Opt {
-    #[structopt(long, short, help = "Enable decoding mode")]
-    decode: bool,
-
-    #[structopt(long, short, help = "Define charset based on percent-encode set")]
-    preset: Option<CharPreset>,
-}
+use crate::cli::{Args, Preset};
 
 fn write_bytes(bytes: &[u8]) {
     io::stdout()
@@ -31,7 +15,7 @@ fn write_bytes(bytes: &[u8]) {
 }
 
 fn main() {
-    let opt = Opt::from_args();
+    let args = Args::parse();
 
     let input = {
         let mut vec = Vec::new();
@@ -41,12 +25,16 @@ fn main() {
         vec
     };
 
-    if opt.decode {
+    const ALL: &AsciiSet = &AsciiSet::EMPTY.complement();
+
+    if args.decode {
         write_bytes(&percent_encoding::percent_decode(&input).collect::<Vec<u8>>());
     } else {
-        let charset = match opt.preset.unwrap_or(CharPreset::control) {
-            CharPreset::control => percent_encoding::NON_ALPHANUMERIC,
-            CharPreset::non_alphanumeric => percent_encoding::CONTROLS,
+        let charset = match args.preset {
+            Preset::Control => percent_encoding::NON_ALPHANUMERIC,
+            Preset::NonAlphanumeric => percent_encoding::CONTROLS,
+            Preset::All => ALL,
+            Preset::None => &AsciiSet::EMPTY,
         };
         write_bytes(
             percent_encoding::percent_encode(&input, charset)
