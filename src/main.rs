@@ -1,21 +1,9 @@
 mod cli;
 
-use percent_encoding::AsciiSet;
-use std::{
-    borrow::Cow,
-    io::{self, Read, Write},
-};
-
-use crate::cli::{Args, Preset};
-
-fn write_bytes(bytes: &[u8]) {
-    io::stdout()
-        .write_all(&bytes)
-        .expect("Failed to write to stdout");
-}
+use std::io::{self, Read, Write};
 
 fn main() {
-    let args = Args::parse();
+    let args = cli::Args::parse();
 
     let input = {
         let mut vec = Vec::new();
@@ -25,21 +13,15 @@ fn main() {
         vec
     };
 
-    const ALL: &AsciiSet = &AsciiSet::EMPTY.complement();
-
+    let mut output = Vec::new();
     if args.decode {
-        write_bytes(&percent_encoding::percent_decode(&input).collect::<Vec<u8>>());
+        args.preset.decode_into(&input, &mut output);
     } else {
-        let charset = match args.preset {
-            Preset::Control => percent_encoding::NON_ALPHANUMERIC,
-            Preset::NonAlphanumeric => percent_encoding::CONTROLS,
-            Preset::All => ALL,
-            Preset::None => &AsciiSet::EMPTY,
-        };
-        write_bytes(
-            percent_encoding::percent_encode(&input, charset)
-                .collect::<Cow<str>>()
-                .as_bytes(),
-        );
+        args.preset.encode_into(&input, &mut output);
     };
+    output.extend_from_slice(args.separator.as_bytes());
+
+    io::stdout()
+        .write_all(&output)
+        .expect("Failed to write to stdout");
 }
