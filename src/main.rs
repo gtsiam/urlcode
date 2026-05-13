@@ -19,7 +19,6 @@ fn main() {
     } else {
         args.preset.encode_into(&input, &mut output);
     };
-    output.extend_from_slice(args.separator.as_bytes());
 
     io::stdout()
         .write_all(&output)

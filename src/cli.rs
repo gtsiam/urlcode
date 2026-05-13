@@ -5,7 +5,6 @@ use urlcode::Preset;
 pub struct Args {
     pub decode: bool,
     pub preset: Preset,
-    pub separator: &'static str,
 }
 
 impl Args {
@@ -24,7 +23,6 @@ impl Args {
 
         let mut decode = false;
         let mut preset = Preset::X_WWW_FORM_URLENCODED;
-        let mut separator = "\n";
 
         while let Some(arg) = parser.next()? {
             use lexopt::Arg::*;
@@ -65,8 +63,6 @@ impl Args {
                 Short('s') | Long("space-plus") => preset.set_space_as_plus(true),
                 Short('S') | Long("no-space-plus") => preset.set_space_as_plus(false),
                 Long("ascii-only") => preset.set_ascii_only(true),
-                Short('0') | Long("null-delimiter") => separator = "\0",
-                Short('n') | Long("no-delimiter") => separator = "",
                 Short('h') | Long("help") => {
                     print!("{}", Help);
                     process::exit(0)
@@ -79,11 +75,7 @@ impl Args {
             }
         }
 
-        Ok(Self {
-            decode,
-            preset,
-            separator,
-        })
+        Ok(Self { decode, preset })
     }
 }
 
@@ -126,9 +118,6 @@ OPTIONS:
   -s, --space-plus          Encode spaces with a single '+'.
   -S, --no-space-plus       Do not encode spaces with a single '+'.
       --ascii-only          Encode all non-ascii characters.
-
-  -0, --null-delimiter      Delimit results with null bytes.
-  -n, --no-delimiter        Do not delimit results.
 
   -h, --help                Print help information.
   -V, --version             Print version information.
